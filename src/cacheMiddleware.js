@@ -1,0 +1,2 @@
+/* Middleware to intercept incoming GET requests and serve 
+cached data from Redis before hitting your controller. */

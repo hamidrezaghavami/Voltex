@@ -1,0 +1,10 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Defines your database schema models for 
+// PostgreSQL and handles connection credentials.

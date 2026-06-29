@@ -1,0 +1,26 @@
+{
+  "name": "backend-setup",
+  "version": "1.0.0",
+  "description": "Manages project dependencies (like express, redis, pg, prisma).",
+  "homepage": "https://github.com/hamidrezaghavami/Voltex#readme",
+  "bugs": {
+    "url": "https://github.com/hamidrezaghavami/Voltex/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hamidrezaghavami/Voltex.git"
+  },
+  "license": "MIT",
+  "author": "HamidRezaGhavami",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.8.0"
+  },
+  "devDependencies": {
+    "prisma": "^7.8.0"
+  }
+}

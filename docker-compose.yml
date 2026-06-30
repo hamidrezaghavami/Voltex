@@ -1,2 +1,74 @@
 # Defines and coordinates all your containers, 
 # custom networks (frontend-net, backend-net), and volume mounts.
+
+version: '3.8'
+
+name: voltex-app
+
+services:
+  # 1. Edge Proxy Layer (Public facing)
+  nginx:
+    image: nginx:alpine
+    container_name: voltex_nginx
+    ports:
+      - "80:80" # Exposed to the internet
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - frontend-net
+    depends_on:
+      - web-app
+
+  # 2. Backend Application Layer (Internal)
+  web-app:
+    build:
+      context: ./src
+      dockerfile: Dockerfile
+    container_name: voltex_backend
+    # No ports exposed to host! Only reachable via Nginx or internal network.
+    volumes:
+      - ./src:/app
+      - /app/node_modules # Prevents local node_modules from overwriting container
+    environment:
+      - NODE_ENV=development
+      - REDIS_URL=redis://redis:6379
+    networks:
+      - frontend-net
+      - backend-net
+    depends_on:
+      - database
+      - redis
+
+  # 3. Speed Layer / Cache (Isolated)
+  redis:
+    image: redis:alpine
+    container_name: voltex_redis
+    command: redis-server --appendonly yes # Enables data persistence
+    volumes:
+      - redis-data:/data
+    networks:
+      - backend-net
+
+  # 4. Storage Layer (Isolated)
+  database:
+    image: postgres:15-alpine
+    container_name: voltex_postgres
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: secret_password
+      POSTGRES_DB: voltex_db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - backend-net
+
+# Networks & Volumes Definitions
+networks:
+  frontend-net:
+    driver: bridge
+  backend-net:
+    driver: bridge
+
+volumes:
+  db-data:
+  redis-data:
